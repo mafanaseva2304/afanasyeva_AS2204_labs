@@ -113,6 +113,7 @@ int main() {
     int choice;
 
     while (true) {
+        cout << "_____MENU______" << endl;
         cout << "1) Add pipe." << endl;
         cout << "2) Add station." << endl;
         cout << "3) See all objects." << endl;
@@ -121,8 +122,136 @@ int main() {
         cout << "6) Save to file." << endl;
         cout << "7) Load from file." << endl;
         cout << "0) Exit." << endl;
-        cout << "Entar your choice:" << endl;
+        cout << "Enter your choice:" << endl;
         cin >> choice;
 
+        switch (choice) {
+            case 1: {
+                pipe new_pipe;
+                new_pipe.input_pipe();
+                pipes.push_back(new_pipe);
+                break;
+            }
+            case 2: {
+                station new_station;
+                new_station.input_station();
+                stations.push_back(new_station);
+                break;
+            }
+            case 3: {
+                cout << "Pipes:" << endl;
+                for (auto& p : pipes) {
+                    p.display_pipe();
+                    cout << endl;
+                }
+                cout << "Stations:" << endl;
+                for (auto& s : stations) {
+                    s.display_station();
+                    cout << endl;
+                }
+                break;
+            }
+            case 4: {
+                cout << "Enter pipe index:" << endl;
+                int index;
+                cin >> index;
+                if (index >= 0 && index < pipes.size()) {
+                    pipes[index].pipe_change_repair_status();
+                    cout << "You've changed pipe repair status" << endl;
+
+                }
+                else {
+                    cout << "Please, rewrite index." << endl;
+                }
+                break;
+            }
+            case 5:{
+                cout << "Enter station index:" << endl;
+                int index;
+                cin >> index;
+                if (index >= 0 && index < stations.size()) {
+                    cout << "1)Start workshop" << endl;
+                    cout << "2)Stop workshop" << endl;
+                    cout << "Enter your choice:" << endl;
+                    int next_choice;
+                    cin >> next_choice;
+                    switch (next_choice) {
+                    case 1: {
+                        stations[index].start_workshop();
+                        break;
+                    }
+                    case 2: {
+                        stations[index].stop_workshop();
+                        break;
+                    }
+                    default:
+                        cout << "Please, enter correct choice." << endl;
+                        break;
+                    }
+
+                }
+                else {
+                    cout << "Please, enter correct index." << endl;
+                }
+                break;
+        }   
+            case 6: {
+                ofstream file("info.txt");
+                if (file.is_open()) {
+                    file << pipes.size() << endl;
+                    for (auto& pipe : pipes) {
+                        pipe.pipe_safe_file(file);
+                    }
+                    file << stations.size() << endl;
+                    for (auto& station : stations) {
+                        station.station_safe_file(file);
+                    }
+                    file.close();
+                    cout << "File was created." << endl;
+
+                }
+                else {
+                    cout << "Error." << endl;
+
+                }
+                break;
+            }
+            case 7: {
+                ifstream file("upload.txt");
+                if (file.is_open()) {
+                    pipes.clear();
+                    stations.clear();
+                    int pcount;
+                    file >> pcount;
+                    file.ignore();
+                    for (int i = 0;i < pcount;i++) {
+                        pipe pipe;
+                        pipe.pipe_load_from_file(file);
+                        pipes.push_back(pipe);
+                    }
+                    int scount;
+                    file >> scount;
+                    file.ignore();
+                    for (int i = 0;i < scount; i++) {
+                        station station;
+                        station.station_load_from_file(file);
+                        stations.push_back(station);
+                    }
+                    file.close();
+                    cout << "Info loaded from txt file." << endl;
+                }
+                else {
+                    cout << "Error.";
+                }
+                break;
+            }
+            case 0: 
+                return 0;
+
+            default:
+                cout << "Incorrect choice." << endl;
+                break;
+        }
     }
+    return 0;
 }
